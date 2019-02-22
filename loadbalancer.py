@@ -173,7 +173,7 @@ class LoadbalancerManager(ResourceManager):
         iip = self._api.instance_ip_read(id=iip_obj.uuid)
         vip_address = iip.get_instance_ip_address()
 
-        LOG.error("###### CREATED INTERFACE: {} *** WITH VIP ADDRESS: {} *** DISPLAY NAME: {} *** WITH INSTANCE IP:[FQ: {}, INSTANCE_IP: {}, SUBNET ID: {}]".format(vmi.get_fq_name_str(),vip_address, vmi.display_name,vmi.get_fq_name_str(), vmi.instance_ip_address, vmi.subnet_uuid))
+        LOG.error("###### CREATED INTERFACE: {} *** WITH VIP ADDRESS: {} *** DISPLAY NAME: {} *** WITH INSTANCE IP:[FQ: {}]".format(vmi.get_fq_name_str(),vip_address, vmi.display_name,vmi.get_fq_name_str()))
         return vmi, vip_address
 
     def _delete_virtual_interface(self, vmi_list):
@@ -211,7 +211,7 @@ class LoadbalancerManager(ResourceManager):
         """
         l = loadbalancer['loadbalancer']
         if (l['provider'] == ATTR_NOT_SPECIFIED):
-            l['provider'] = "opencontrail, SUBNET ID: {}"
+            l['provider'] = "opencontrail"
         sas_obj = self.check_provider_exists(l['provider'])
         tenant_id = self._get_tenant_id_for_create(context, l)
         project = self._project_read(project_id=tenant_id)
