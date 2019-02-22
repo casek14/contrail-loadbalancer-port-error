@@ -84,6 +84,8 @@ class LoadbalancerManager(ResourceManager):
                 return None
 
             ip_refs = vmi.get_instance_ip_back_refs()
+            # print Interface params
+            LOG.error("******************* GETTING INTERFACE PARAMS: {}".format(ip_refs))
             if ip_refs:
                 try:
                     iip = self._api.instance_ip_read(id=ip_refs[0]['uuid'])
@@ -145,6 +147,9 @@ class LoadbalancerManager(ResourceManager):
     def _create_virtual_interface(self, project, lb_id, subnet_id,
                                   ip_address):
         network_id = utils.get_subnet_network_id(self._api, subnet_id)
+
+        # Log creating of LB INTERFACE
+        LOG.error("@@@@@@@@ CREATING LB INTERFACE, LB_ID: {}  *** IN_SUBNET: {} *** WITH IP_ADDRESS: {}".format(lb_id, subnet_id, ip_address))
         try:
             vnet = self._api.virtual_network_read(id=network_id)
         except NoIdError:
@@ -168,6 +173,7 @@ class LoadbalancerManager(ResourceManager):
         iip = self._api.instance_ip_read(id=iip_obj.uuid)
         vip_address = iip.get_instance_ip_address()
 
+        LOG.error("###### CREATED INTERFACE: {} *** WITH VIP ADDRESS: {}".format(vmi.get_fq_name_str(),vip_address))
         return vmi, vip_address
 
     def _delete_virtual_interface(self, vmi_list):
@@ -196,7 +202,7 @@ class LoadbalancerManager(ResourceManager):
                     continue
                 fip.set_virtual_machine_interface_list([])
                 self._api.floating_ip_update(fip)
-
+            LOG.error("******************* DELETING VIRTUAL MACHINE INTERFACE {}".format(interface_id))
             self._api.virtual_machine_interface_delete(id=interface_id)
 
     def create(self, context, loadbalancer):
