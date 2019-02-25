@@ -222,7 +222,7 @@ class LoadbalancerManager(ResourceManager):
         name = self._get_resource_name('loadbalancer', project,
                                        l['name'], obj_uuid)
 
-        LOG.error("********** LB NAME: {} *** LB ID: {} *** LB PROJECT: {} *** LB TENANT: {}".format(name, obj_uuid, project, tenant))
+        LOG.error("********** LB NAME: {} *** LB ID: {} *** LB PROJECT: {} *** LB TENANT: {}".format(name, obj_uuid, project, tenant_id))
 
         id_perms = IdPermsType(enable=True, description=l['description'])
         lb = Loadbalancer(name, project, uuid=obj_uuid,
