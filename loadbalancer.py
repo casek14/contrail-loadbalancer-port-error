@@ -210,7 +210,7 @@ class LoadbalancerManager(ResourceManager):
         Create a loadbalancer.
         """
         l = loadbalancer['loadbalancer']
-        LOG.error("********** CREATING LOADBALANCER- l_object: {}".format(l)
+        LOG.error("********** CREATING LOADBALANCER- l_object: {}".format(l))
 
         if (l['provider'] == ATTR_NOT_SPECIFIED):
             l['provider'] = "opencontrail"
@@ -243,7 +243,7 @@ class LoadbalancerManager(ResourceManager):
         lb.set_loadbalancer_properties(props)
 
         self._api.loadbalancer_create(lb)
-        LOG.error("********** LB CREATED: {}".format(lb.uuid)
+        LOG.error("********** LB CREATED: {}".format(lb.uuid))
         return self.make_dict(lb)
 
     def delete(self, context, id):
