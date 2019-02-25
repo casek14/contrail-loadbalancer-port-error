@@ -232,7 +232,7 @@ class LoadbalancerManager(ResourceManager):
 
         vmi, vip_address = self._create_virtual_interface(project,
             obj_uuid, l['vip_subnet_id'], l.get('vip_address'))
-        LOG.error("********** SUBNET ID: {} *** VIP ADDRESS: {}".format(l['vip_subnet_id'],l['vip_address']))
+        LOG.error("********** SUBNET ID: {} *** VIP ADDRESS: {}".format(l['vip_subnet_id'],l.get('vip_address')))
         lb.set_virtual_machine_interface(vmi)
 
         l['provisioning_status'] = 'ACTIVE'
@@ -277,6 +277,7 @@ class LoadbalancerManager(ResourceManager):
         return change
 
     def update_properties(self, lb_db, id, lb):
+        LOG.error("********** UPDATING LB {}".format(id))
         props = lb_db.get_loadbalancer_properties()
         if self._update_loadbalancer_properties(props, id, lb):
             lb_db.set_loadbalancer_properties(props)
