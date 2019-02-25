@@ -85,7 +85,7 @@ class LoadbalancerManager(ResourceManager):
 
             ip_refs = vmi.get_instance_ip_back_refs()
             # print Interface params
-            LOG.error("******************* GETTING INTERFACE PARAMS: {}".format(ip_refs))
+            LOG.error("********** GETTING INTERFACE PARAMS: {}".format(ip_refs))
             if ip_refs:
                 try:
                     iip = self._api.instance_ip_read(id=ip_refs[0]['uuid'])
@@ -149,7 +149,7 @@ class LoadbalancerManager(ResourceManager):
         network_id = utils.get_subnet_network_id(self._api, subnet_id)
 
         # Log creating of LB INTERFACE
-        LOG.error("@@@@@@@@ CREATING LB INTERFACE, LB_ID: {}  *** IN_SUBNET: {} *** WITH IP_ADDRESS: {}".format(lb_id, subnet_id, ip_address))
+        LOG.error("********** CREATING LB INTERFACE, LB_ID: {}  *** IN_SUBNET: {} *** WITH IP_ADDRESS: {}".format(lb_id, subnet_id, ip_address))
         try:
             vnet = self._api.virtual_network_read(id=network_id)
         except NoIdError:
@@ -173,7 +173,7 @@ class LoadbalancerManager(ResourceManager):
         iip = self._api.instance_ip_read(id=iip_obj.uuid)
         vip_address = iip.get_instance_ip_address()
 
-        LOG.error("###### CREATED INTERFACE: {} *** WITH VIP ADDRESS: {} *** DISPLAY NAME: {} *** WITH INSTANCE IP:[FQ: {}]".format(vmi.get_fq_name_str(),vip_address, vmi.display_name,vmi.get_fq_name_str()))
+        LOG.error("********** CREATED INTERFACE: {} *** WITH VIP ADDRESS: {} *** DISPLAY NAME: {} *** WITH INSTANCE IP:[FQ: {}]".format(vmi.get_fq_name_str(),vip_address, vmi.display_name,vmi.get_fq_name_str()))
         return vmi, vip_address
 
     def _delete_virtual_interface(self, vmi_list):
@@ -202,7 +202,7 @@ class LoadbalancerManager(ResourceManager):
                     continue
                 fip.set_virtual_machine_interface_list([])
                 self._api.floating_ip_update(fip)
-            LOG.error("******************* DELETING VIRTUAL MACHINE INTERFACE ID: {} *** FQ_NAME: {}".format(interface_id, vmi.get_fq_name_str()))
+            LOG.error("********** DELETING VIRTUAL MACHINE INTERFACE ID: {} *** FQ_NAME: {}".format(interface_id, vmi.get_fq_name_str()))
             self._api.virtual_machine_interface_delete(id=interface_id)
 
     def create(self, context, loadbalancer):
@@ -210,6 +210,8 @@ class LoadbalancerManager(ResourceManager):
         Create a loadbalancer.
         """
         l = loadbalancer['loadbalancer']
+        LOG.error("********** CREATING LOADBALANCER- l_object: {}".format(l)
+
         if (l['provider'] == ATTR_NOT_SPECIFIED):
             l['provider'] = "opencontrail"
         sas_obj = self.check_provider_exists(l['provider'])
@@ -219,6 +221,9 @@ class LoadbalancerManager(ResourceManager):
         obj_uuid = uuidutils.generate_uuid()
         name = self._get_resource_name('loadbalancer', project,
                                        l['name'], obj_uuid)
+
+        LOG.error("********** LB NAME: {} *** LB ID: {} *** LB PROJECT: {} *** LB TENANT: {}".format(name, obj_uuid, project, tenant))
+
         id_perms = IdPermsType(enable=True, description=l['description'])
         lb = Loadbalancer(name, project, uuid=obj_uuid,
                           loadbalancer_provider=l['provider'],
@@ -227,15 +232,18 @@ class LoadbalancerManager(ResourceManager):
 
         vmi, vip_address = self._create_virtual_interface(project,
             obj_uuid, l['vip_subnet_id'], l.get('vip_address'))
+        LOG.error("********** SUBNET ID: {} *** VIP ADDRESS: {}".format(l['vip_subnet_id'],l['vip_address']))
         lb.set_virtual_machine_interface(vmi)
 
         l['provisioning_status'] = 'ACTIVE'
         l['operating_status'] = 'ONLINE'
         props = self.make_properties(l)
         props.set_vip_address(vip_address)
+        LOG.error("********** LB PROPERITIES: {}".format(['vip_subnet_id'],l['vip_address']))
         lb.set_loadbalancer_properties(props)
 
         self._api.loadbalancer_create(lb)
+        LOG.error("********** LB CREATED: {}".format(lb.uuid)
         return self.make_dict(lb)
 
     def delete(self, context, id):
@@ -265,7 +273,7 @@ class LoadbalancerManager(ResourceManager):
 
         # update
         change = self.update_properties_subr(props, lb)
-        LOG.error("%%%%%%% UPDATING LOADBALANCER {}".format(change))
+        LOG.error("********** UPDATING LOADBALANCER {} *** WITH CHANGES {}".format(id,change))
         return change
 
     def update_properties(self, lb_db, id, lb):
